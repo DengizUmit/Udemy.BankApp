@@ -18,7 +18,7 @@ namespace Udemy.BankApp.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(_bankContext.ApplicationUsers.ToList());
         }
     }
 }
