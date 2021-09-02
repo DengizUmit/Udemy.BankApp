@@ -9,6 +9,7 @@
         <tr>
             <td>Name</td>
             <td>Surname</td>
+            <td>Account Count</td>
             <td></td>
         </tr>
     </thead>
@@ -18,7 +19,10 @@
         <tr>
             <td>@item.Name</td>
             <td>@item.Surname</td>
-            <td></td>
+            <td><getAccountCount application-user-id="@item.Id"></getAccountCount></td>
+            <td>
+                <a asp-action="Create" asp-controller="Account" app-route-id="@item.Id">Create New Account</a>
+            </td>
         </tr>
         }
     </tbody>
