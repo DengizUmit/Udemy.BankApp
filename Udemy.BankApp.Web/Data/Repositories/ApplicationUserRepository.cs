@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Udemy.BankApp.Web.Data.Context;
 using Udemy.BankApp.Web.Data.Entities;
+using Udemy.BankApp.Web.Data.Interfaces;
 
 namespace Udemy.BankApp.Web.Data.Repositories
 {
-    public class ApplicationUserRepository
+    public class ApplicationUserRepository : IApplicationUserRepository
     {
         private readonly BankContext _bankContext;
 

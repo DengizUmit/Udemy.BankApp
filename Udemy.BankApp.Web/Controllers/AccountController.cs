@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Udemy.BankApp.Web.Data.Context;
+using Udemy.BankApp.Web.Data.Interfaces;
 using Udemy.BankApp.Web.Data.Repositories;
+using Udemy.BankApp.Web.Mapping;
 using Udemy.BankApp.Web.Models;
 
 namespace Udemy.BankApp.Web.Controllers
@@ -12,16 +14,19 @@ namespace Udemy.BankApp.Web.Controllers
     public class AccountController : Controller
     {
         private readonly BankContext _bankContext;
-        private readonly ApplicationUserRepository applicationUserRepository;
-        public AccountController(BankContext bankContext)
+        private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IUserMapper _userMapper;
+
+        public AccountController(BankContext bankContext, IApplicationUserRepository applicationUserRepository, IUserMapper userMapper)
         {
             _bankContext = bankContext;
-            applicationUserRepository = new ApplicationUserRepository(_bankContext);
+            _applicationUserRepository = applicationUserRepository;
+            _userMapper = userMapper;
         }
 
         public IActionResult Create(int id)
         {
-            var userInfo = applicationUserRepository.GetById(id);
+            var userInfo = _userMapper.MapToUserList(_applicationUserRepository.GetById(id));
 
             return View(userInfo);
         }

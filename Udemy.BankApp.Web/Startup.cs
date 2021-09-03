@@ -11,6 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Udemy.BankApp.Web.Data.Context;
+using Udemy.BankApp.Web.Data.Interfaces;
+using Udemy.BankApp.Web.Data.Repositories;
+using Udemy.BankApp.Web.Mapping;
 
 namespace Udemy.BankApp.Web
 {
@@ -24,6 +27,8 @@ namespace Udemy.BankApp.Web
             {
                 opt.UseSqlServer("server=(localdb)\\mssqllocaldb; database=BankAppDb; integrated security=true");
             });
+            services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddScoped<IUserMapper, UserMapper>();
             services.AddControllersWithViews();
         }
 
