@@ -13,15 +13,17 @@ namespace Udemy.BankApp.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly BankContext _bankContext;
         private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IAccountMapper _accountMapper;
         private readonly IUserMapper _userMapper;
 
-        public AccountController(BankContext bankContext, IApplicationUserRepository applicationUserRepository, IUserMapper userMapper)
+        public AccountController(IApplicationUserRepository applicationUserRepository, IUserMapper userMapper, IAccountRepository accountRepository, IAccountMapper accountMapper)
         {
-            _bankContext = bankContext;
             _applicationUserRepository = applicationUserRepository;
             _userMapper = userMapper;
+            _accountRepository = accountRepository;
+            _accountMapper = accountMapper;
         }
 
         public IActionResult Create(int id)
@@ -34,14 +36,7 @@ namespace Udemy.BankApp.Web.Controllers
         [HttpPost]
         public IActionResult Create(AccountCreateModel accountCreateModel)
         {
-            _bankContext.Accounts.Add(new Data.Entities.Account
-            {
-                AccountNumber = accountCreateModel.AccountNumber,
-                ApplicationUserId = accountCreateModel.ApplicationUserId,
-                Balance = accountCreateModel.Balance
-            });
-            _bankContext.SaveChanges();
-
+            _accountRepository.Create(_accountMapper.Map(accountCreateModel));
             return RedirectToAction("Index", "Home");
         }
     }

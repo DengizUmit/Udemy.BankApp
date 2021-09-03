@@ -13,13 +13,11 @@ namespace Udemy.BankApp.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly BankContext _bankContext;
         private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IUserMapper _userMapper;
 
-        public HomeController(BankContext bankContext, IApplicationUserRepository applicationUserRepository, IUserMapper userMapper)
+        public HomeController(IApplicationUserRepository applicationUserRepository, IUserMapper userMapper)
         {
-            _bankContext = bankContext;
             _applicationUserRepository = applicationUserRepository;
             _userMapper = userMapper;
         }

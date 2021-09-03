@@ -26,5 +26,11 @@ namespace Udemy.BankApp.Web.Data.Repositories
         {
             return _bankContext.ApplicationUsers.SingleOrDefault(x => x.Id == id);
         }
+
+        public void Create(ApplicationUser applicationUser)
+        {
+            _bankContext.ApplicationUsers.Add(applicationUser);
+            _bankContext.SaveChanges();
+        }
     }
 }
