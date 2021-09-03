@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Udemy.BankApp.Web.Data.Context;
+using Udemy.BankApp.Web.Data.Repositories;
 using Udemy.BankApp.Web.Models;
 
 namespace Udemy.BankApp.Web.Controllers
@@ -11,20 +12,16 @@ namespace Udemy.BankApp.Web.Controllers
     public class AccountController : Controller
     {
         private readonly BankContext _bankContext;
-
+        private readonly ApplicationUserRepository applicationUserRepository;
         public AccountController(BankContext bankContext)
         {
             _bankContext = bankContext;
+            applicationUserRepository = new ApplicationUserRepository(_bankContext);
         }
 
         public IActionResult Create(int id)
         {
-            var userInfo = _bankContext.ApplicationUsers.Select(x => new UserListModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Surname = x.Surname
-            }).SingleOrDefault(x => x.Id == id);
+            var userInfo = applicationUserRepository.GetById(id);
 
             return View(userInfo);
         }
