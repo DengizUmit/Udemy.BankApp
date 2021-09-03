@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Udemy.BankApp.Web.Data.Context;
+using Udemy.BankApp.Web.Models;
 
 namespace Udemy.BankApp.Web.Controllers
 {
@@ -18,7 +19,12 @@ namespace Udemy.BankApp.Web.Controllers
 
         public IActionResult Index()
         {
-            return View(_bankContext.ApplicationUsers.ToList());
+            return View(_bankContext.ApplicationUsers.Select(x => new UserListModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Surname = x.Surname
+            }).ToList());
         }
     }
 }
