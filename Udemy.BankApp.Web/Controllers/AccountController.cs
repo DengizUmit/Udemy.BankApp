@@ -66,6 +66,9 @@ namespace Udemy.BankApp.Web.Controllers
             var accounts = query.Where(x => x.ApplicationUserId == userId).ToList();
 
             var user = _userRepository.GetById(userId);
+
+            ViewBag.FullName = user.Name + " " + user.Surname;
+
             var list = new List<AccountListModel>();
 
             foreach (var account in accounts)
@@ -75,7 +78,6 @@ namespace Udemy.BankApp.Web.Controllers
                     AccountNumber = account.AccountNumber,
                     ApplicationUserId = account.ApplicationUserId,
                     Balance = account.Balance,
-                    FullName = user.Name+ " " +user.Surname,
                     Id = account.Id
                 });
             }
