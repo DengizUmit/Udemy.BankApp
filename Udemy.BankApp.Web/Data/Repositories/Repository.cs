@@ -32,5 +32,10 @@ namespace Udemy.BankApp.Web.Data.Repositories
             _bankContext.Set<T>().Update(entity);
             _bankContext.SaveChanges();
         }
+
+        public IQueryable<T> GetQueryable()
+        {
+            return _bankContext.Set<T>().AsQueryable();
+        }
     }
 }

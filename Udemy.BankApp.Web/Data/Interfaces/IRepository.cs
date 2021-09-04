@@ -11,5 +11,7 @@ namespace Udemy.BankApp.Web.Data.Interfaces
         void Remove(T entity);
         List<T> GetAll();
         void Update(T entity);
+
+        IQueryable<T> GetQueryable();
     }
 }

@@ -58,5 +58,29 @@ namespace Udemy.BankApp.Web.Controllers
             });
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        public IActionResult GetByUserId(int userId)
+        {
+            var query = _accountRepository.GetQueryable();
+            var accounts = query.Where(x => x.ApplicationUserId == userId).ToList();
+
+            var user = _userRepository.GetById(userId);
+            var list = new List<AccountListModel>();
+
+            foreach (var account in accounts)
+            {
+                list.Add(new()
+                {
+                    AccountNumber = account.AccountNumber,
+                    ApplicationUserId = account.ApplicationUserId,
+                    Balance = account.Balance,
+                    FullName = user.Name+ " " +user.Surname,
+                    Id = account.Id
+                });
+            }
+
+            return View(list);
+        }
     }
 }
