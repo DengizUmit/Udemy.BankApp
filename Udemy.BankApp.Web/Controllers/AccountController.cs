@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +84,43 @@ namespace Udemy.BankApp.Web.Controllers
             }
 
             return View(list);
+        }
+
+        [HttpGet]
+        public IActionResult SendMoney(int accountId)
+        {
+            var query = _accountRepository.GetQueryable();
+            var accounts = query.Where(x => x.Id != accountId).ToList();
+            var list = new List<AccountListModel>();
+
+            ViewBag.SenderId = accountId;
+
+            foreach (var account in accounts)
+            {
+                list.Add(new()
+                {
+                    AccountNumber = account.AccountNumber,
+                    ApplicationUserId = account.ApplicationUserId,
+                    Balance = account.Balance,
+                    Id = account.Id
+                });
+            }
+
+            return View(new SelectList(list, "Id", "AccountNumber"));
+        }
+
+        [HttpPost]
+        public IActionResult SendMoney(SendMoneyModel model)
+        {
+            var senderAccount = _accountRepository.GetById(model.SenderId);
+            senderAccount.Balance -= model.Amount;
+            _accountRepository.Update(senderAccount);
+
+            var account = _accountRepository.GetById(model.AccountId);
+            account.Balance += model.Amount;
+            _accountRepository.Update(account);
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }
