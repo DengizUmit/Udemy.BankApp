@@ -8,6 +8,7 @@ using Udemy.BankApp.Web.Data.Context;
 using Udemy.BankApp.Web.Data.Entities;
 using Udemy.BankApp.Web.Data.Interfaces;
 using Udemy.BankApp.Web.Data.Repositories;
+using Udemy.BankApp.Web.Data.UnitOfWork;
 using Udemy.BankApp.Web.Mapping;
 using Udemy.BankApp.Web.Models;
 
@@ -28,45 +29,53 @@ namespace Udemy.BankApp.Web.Controllers
         //    _accountMapper = accountMapper;
         //}
 
-        private readonly IRepository<ApplicationUser> _userRepository;
-        private readonly IRepository<Account> _accountRepository;
+        //private readonly IRepository<ApplicationUser> _userRepository;
+        //private readonly IRepository<Account> _accountRepository;
 
-        public AccountController(IRepository<Account> accountRepository, IRepository<ApplicationUser> userRepository)
+        //public AccountController(IRepository<Account> accountRepository, IRepository<ApplicationUser> userRepository)
+        //{
+        //    _accountRepository = accountRepository;
+        //    _userRepository = userRepository;
+        //}
+
+        private readonly IUow _uow;
+
+        public AccountController(IUow uow)
         {
-            _accountRepository = accountRepository;
-            _userRepository = userRepository;
+            _uow = uow;
         }
 
-        //public IActionResult Create(int id)
-        //{
-        //    var userInfo = _userRepository.GetById(id);
-        //    return View(new UserListModel
-        //    {
-        //        Id = userInfo.Id,
-        //        Name = userInfo.Name,
-        //        Surname = userInfo.Surname
-        //    });
-        //}
+        public IActionResult Create(int id)
+        {
+            var userInfo = _uow.GetRepository<ApplicationUser>().GetById(id);
+            return View(new UserListModel
+            {
+                Id = userInfo.Id,
+                Name = userInfo.Name,
+                Surname = userInfo.Surname
+            });
+        }
 
         [HttpPost]
         public IActionResult Create(AccountCreateModel accountCreateModel)
         {
-            _accountRepository.Create(new Account
+            _uow.GetRepository<Account>().Create(new Account
             {
                 AccountNumber = accountCreateModel.AccountNumber,
                 ApplicationUserId = accountCreateModel.ApplicationUserId,
                 Balance = accountCreateModel.Balance
             });
+            _uow.SaveChanges();
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public IActionResult GetByUserId(int userId)
         {
-            var query = _accountRepository.GetQueryable();
+            var query = _uow.GetRepository<Account>().GetQueryable();
             var accounts = query.Where(x => x.ApplicationUserId == userId).ToList();
 
-            var user = _userRepository.GetById(userId);
+            var user = _uow.GetRepository<ApplicationUser>().GetById(userId);
 
             ViewBag.FullName = user.Name + " " + user.Surname;
 
@@ -89,7 +98,7 @@ namespace Udemy.BankApp.Web.Controllers
         [HttpGet]
         public IActionResult SendMoney(int accountId)
         {
-            var query = _accountRepository.GetQueryable();
+            var query = _uow.GetRepository<Account>().GetQueryable();
             var accounts = query.Where(x => x.Id != accountId).ToList();
             var list = new List<AccountListModel>();
 
@@ -112,14 +121,15 @@ namespace Udemy.BankApp.Web.Controllers
         [HttpPost]
         public IActionResult SendMoney(SendMoneyModel model)
         {
-            var senderAccount = _accountRepository.GetById(model.SenderId);
+            var senderAccount = _uow.GetRepository<Account>().GetById(model.SenderId);
             senderAccount.Balance -= model.Amount;
-            _accountRepository.Update(senderAccount);
+            _uow.GetRepository<Account>().Update(senderAccount);
 
-            var account = _accountRepository.GetById(model.AccountId);
+            var account = _uow.GetRepository<Account>().GetById(model.AccountId);
             account.Balance += model.Amount;
-            _accountRepository.Update(account);
+            _uow.GetRepository<Account>().Update(account);
 
+            _uow.SaveChanges();
             return RedirectToAction("Index", "Home");
         }
     }
